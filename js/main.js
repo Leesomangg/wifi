@@ -49,8 +49,24 @@ window.onload = function () {
       htmlRoot.classList.add("active");
     }
   });
-
-  // swiper적용
+  // 비주얼 슬라이드
+  // 1.슬라이드 (.swiper-slide)개수 만큼 li생성하기
+  const swSlideCount = document.querySelectorAll(
+    ".sw-visual .swiper-slide"
+  ).length;
+  // 2.li태그 출력 장소(UL태그 )저장
+  const swSlidePgUl = document.querySelector(".sw-visual-pg-list");
+  // 3.li에 html로 작성할 글자를 생성한다.
+  let swVisualHtml = ``;
+  for (let i = 0; i < swSlideCount; i++) {
+    swVisualHtml = swVisualHtml + `<li>${i + 1}</li>`;
+  }
+  // 4.html을 추가해준다
+  swSlidePgUl.innerHTML = swVisualHtml;
+  // 5. 페이지네이션 관련 (코딩으로 생성한 li태그 저장)
+  const swVisualPgLi = document.querySelectorAll(".sw-visual-pg-list > li");
+  // console.log(swViusalPgLi);
+  // 비주얼 swiper적용
   const swiper = new Swiper(".sw-visual", {
     effect: "fade",
     loop: true,
@@ -68,7 +84,26 @@ window.onload = function () {
       prevEl: ".sw-visual-prev",
     },
   });
-
+  // swiper가 최초 생성될때
+  swVisualPgLi[0].classList.add("active");
+  // swiper가 바뀔때 마다 실행
+  // swiper의 api 를 참조해서 작성
+  swiper.on("slideChange", function () {
+    swVisualPgLi.forEach((item, index) => {
+      if (swiper.realIndex === index) {
+        item.classList.add("active");
+      } else {
+        item.classList.remove("active");
+      }
+    });
+  });
+  // li에 클릭했을때 스와이퍼가 적용
+  swVisualPgLi.forEach((item, index) => {
+    item.addEventListener("click", () => {
+      swiper.slideToLoop(index, 500);
+    });
+  });
+  // ==============================================================================
   // besiness 스와퍼 적용
   const swBusiness = new Swiper(".sw-business", {
     breakpoints: {
@@ -89,7 +124,6 @@ window.onload = function () {
       behavior: "smooth",
     });
   });
-
   let footer = document.querySelector(".footer");
   let footerY = footer.offsetTop;
   // console.log(footerY);
@@ -98,8 +132,7 @@ window.onload = function () {
     handler: function (direction) {
       if (direction === "down") {
         gotop.classList.add("active-footer");
-      }
-      else{
+      } else {
         gotop.classList.remove("active-footer");
       }
     },
@@ -108,6 +141,7 @@ window.onload = function () {
   let waypoint_service = new Waypoint({
     element: document.querySelector(".service"),
     handler: function (direction) {
+      console.log(direction);
       if (direction === "down") {
         gotop.classList.add("active");
       } else {
@@ -115,5 +149,11 @@ window.onload = function () {
       }
     },
     offset: "80%",
+  });
+
+  // business 모달 기능
+  const businessModal = document.querySelector(".business-modal");
+  businessModal.addEventListener("click", function () {
+    businessModal.style.display = "none";
   });
 };
